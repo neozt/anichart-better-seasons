@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         anichart-better-seasons
 // @namespace    https://github.com/neozt/anichart-better-seasons
-// @version      v1.0.0
+// @version      v1.0.1
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
 // @author       Zhen Ting, Neo
 // @match        https://anichart.net/**
@@ -28,7 +28,7 @@
                 createSeasonLink(document, {
                     season: changeSeason(currentSeason, i),
                     dataAttr: extractVueDataAttr(seasonsContainer),
-                    isActive: i === 0,
+                    activeLink: i === 0,
                 })
             )
         seasonsContainer.replaceChildren(...seasonLinks)
@@ -103,10 +103,10 @@
      * @param {Document} document
      * @param {{name: string, year: number}} season
      * @param {string} dataAttr
-     * @param {boolean} isActive
+     * @param {boolean} activeLink Whether the link is currently selected
      * @returns {HTMLAnchorElement} Anchor tag used to redirect the browser to `season` page
      */
-    function createSeasonLink(document, {season, dataAttr, isActive}) {
+    function createSeasonLink(document, {season, dataAttr, activeLink}) {
         const seasonNameDiv = document.createElement('div')
         seasonNameDiv.className = 'season-name'
         seasonNameDiv.innerText = season.name
@@ -119,7 +119,7 @@
 
         const anchor = document.createElement('a')
         anchor.href = constructSeasonUrl(season)
-        anchor.className = isActive ? 'season router-link-exact-active router-link-active' : 'season'
+        anchor.className = activeLink ? 'season router-link-exact-active router-link-active' : 'season'
         anchor.setAttribute(`data-${dataAttr}`, undefined)
         anchor.append(seasonNameDiv, seasonYearDiv)
         return anchor
