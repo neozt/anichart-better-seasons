@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         anichart-better-seasons
 // @namespace    https://github.com/neozt/anichart-better-seasons
-// @version      v0.0.3
+// @version      v0.0.4
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
 // @author       Zhen Ting, Neo
 // @match        https://anichart.net/**
@@ -24,12 +24,18 @@
 
         const seasonsContainer = document.querySelector('.seasons')
         const seasonLinks = [-2, -1, 0, 1, 2]
-            .map(i => createSeasonLink(document, changeSeason(currentSeason, i), getVueDataAttr(seasonsContainer), i === 0))
+            .map(i =>
+                createSeasonLink(document, {
+                    season: changeSeason(currentSeason, i),
+                    dataAttr: extractVueDataAttr(seasonsContainer),
+                    isActive: i === 0,
+                })
+            )
         seasonsContainer.replaceChildren(...seasonLinks)
     }
 
     /**
-     * Returns the current URL.
+     * Returns the current browser URL.
      * @param {Window} window Browser window object
      * @returns {string}
      */
@@ -46,11 +52,11 @@
         const splitted = url.split('/')
         const lastPart = splitted[splitted.length - 1]
         const [name, year] = lastPart.split('-')
-        return { name, year: parseInt(year) }
+        return {name, year: parseInt(year)}
     }
 
     /**
-     * Calculates the value of the next <code>offset</code> season
+     * Calculates the value of the next <code>offset</code> season.
      * @param {{name: string, year: number}} current The current season
      * @param {number} offset Can be positive or negative. Positive will calculate next season, negative will calculate previous season
      * @returns {{name: string, year: number}}
@@ -71,7 +77,7 @@
     /**
      *
      * @param {{name: string, year: number}} season
-     * @returns {string} New url that points to <code>season</code>
+     * @returns {string} New relative url that points to <code>season</code>
      */
     function constructSeasonUrl(season) {
         return `/${season.name}-${season.year}`
@@ -83,7 +89,7 @@
      * @param {HTMLElement} node
      * @returns {undefined|string}
      */
-    function getVueDataAttr(node) {
+    function extractVueDataAttr(node) {
         const rawDataAttr = Object.keys(node.dataset)?.[0]
         if (!rawDataAttr) {
             return undefined
@@ -93,13 +99,14 @@
     }
 
     /**
+     *
      * @param {Document} document
      * @param {{name: string, year: number}} season
      * @param {string} dataAttr
      * @param {boolean} isActive
-     * @returns {HTMLAnchorElement}
+     * @returns {HTMLAnchorElement} Anchor tag used to redirect the browser to `season` page
      */
-    function createSeasonLink(document, season, dataAttr, isActive) {
+    function createSeasonLink(document, {season, dataAttr, isActive}) {
         const seasonNameDiv = document.createElement('div')
         seasonNameDiv.className = 'season-name'
         seasonNameDiv.innerText = season.name
