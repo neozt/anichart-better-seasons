@@ -66,7 +66,7 @@
         const {name: currentSeasonName, year: currentYear} = current
         const currentSeasonIndex = NAME_OF_SEASONS.findIndex(name => name === currentSeasonName)
 
-        let deltaYear = Math.floor((currentSeasonIndex + offset) / NAME_OF_SEASONS.length)
+        const deltaYear = Math.floor((currentSeasonIndex + offset) / NAME_OF_SEASONS.length)
 
         const newName = NAME_OF_SEASONS[mod(currentSeasonIndex + offset, NAME_OF_SEASONS.length)]
         const newYear = currentYear + deltaYear
