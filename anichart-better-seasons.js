@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         anichart-better-seasons
 // @namespace    https://github.com/neozt/anichart-better-seasons
-// @version      v0.0.1
+// @version      v0.0.2
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
 // @author       Zhen Ting, Neo
 // @match        https://anichart.net/**
@@ -20,7 +20,7 @@
         const currentUrl = getUrl(window)
         const currentSeason = extractSeason(currentUrl)
 
-        console.log("[anichart-better-seasons]", {currentSeason, currentUrl});
+        console.log(`[anichart-better-seasons] currentSeason: ${JSON.stringify(currentSeason)}, currentUrl: ${currentUrl}`);
 
         const seasonsContainer = document.querySelector('.seasons')
         const seasonLinks = [-2, -1, 0, 1, 2]
@@ -40,20 +40,20 @@
     /**
      * Extracts season's name and year from a URL.
      * @param {string} url
-     * @returns {{name: string, year: string}}
+     * @returns {{name: string, year: number}}
      */
     function extractSeason(url) {
         const splitted = url.split('/')
-        const lastPart = splitted[splitted.length - 1];
+        const lastPart = splitted[splitted.length - 1]
         const [name, year] = lastPart.split('-')
-        return {name, year}
+        return { name, year: parseInt(year) }
     }
 
     /**
      * Calculates the value of the next <code>offset</code> season
-     * @param {{name: string, year: string}} current The current season
+     * @param {{name: string, year: number}} current The current season
      * @param {number} offset Can be positive or negative. Positive will calculate next season, negative will calculate previous season
-     * @returns {{name: string, year: string}}
+     * @returns {{name: string, year: number}}
      */
     function changeSeason(current, offset) {
         const NAME_OF_SEASONS = ['Winter', 'Spring', 'Summer', 'Fall'];
@@ -63,14 +63,14 @@
         let deltaYear = Math.floor((currentSeasonIndex + offset) / NAME_OF_SEASONS.length)
 
         const newName = NAME_OF_SEASONS[mod(currentSeasonIndex + offset, NAME_OF_SEASONS.length)]
-        const newYear = (parseInt(currentYear) + deltaYear).toString()
+        const newYear = currentYear + deltaYear
 
         return {name: newName, year: newYear};
     }
 
     /**
      *
-     * @param {{name: string, year: string}} season
+     * @param {{name: string, year: number}} season
      * @returns {string} New url that points to <code>season</code>
      */
     function constructSeasonUrl(season) {
@@ -94,7 +94,7 @@
 
     /**
      * @param {Document} document
-     * @param {{name: string, year: string}} season
+     * @param {{name: string, year: number}} season
      * @param {string} dataAttr
      * @param {boolean} isActive
      * @returns {HTMLAnchorElement}
@@ -107,7 +107,7 @@
 
         const seasonYearDiv = document.createElement('div')
         seasonYearDiv.className = 'season-year'
-        seasonYearDiv.innerText = season.year
+        seasonYearDiv.innerText = season.year.toString()
         seasonYearDiv.setAttribute(`data-${dataAttr}`, undefined)
 
         const anchor = document.createElement('a')
