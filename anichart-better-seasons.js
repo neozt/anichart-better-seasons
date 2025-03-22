@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         anichart-better-seasons
 // @namespace    https://github.com/neozt/anichart-better-seasons
-// @version      v0.0.2
+// @version      v0.0.3
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
 // @author       Zhen Ting, Neo
 // @match        https://anichart.net/**
@@ -10,9 +10,9 @@
 // ==/UserScript==
 
 (function () {
-    'use strict';
+    'use strict'
 
-    console.log('[anichart-better-seasons] script running');
+    console.log('[anichart-better-seasons] script running')
 
     window.navigation.addEventListener("navigate", () => setTimeout(main))
 
@@ -20,7 +20,7 @@
         const currentUrl = getUrl(window)
         const currentSeason = extractSeason(currentUrl)
 
-        console.log(`[anichart-better-seasons] currentSeason: ${JSON.stringify(currentSeason)}, currentUrl: ${currentUrl}`);
+        console.log(`[anichart-better-seasons] currentSeason: ${JSON.stringify(currentSeason)}, currentUrl: ${currentUrl}`)
 
         const seasonsContainer = document.querySelector('.seasons')
         const seasonLinks = [-2, -1, 0, 1, 2]
@@ -34,7 +34,7 @@
      * @returns {string}
      */
     function getUrl(window) {
-        return window.location.href;
+        return window.location.href
     }
 
     /**
@@ -56,16 +56,16 @@
      * @returns {{name: string, year: number}}
      */
     function changeSeason(current, offset) {
-        const NAME_OF_SEASONS = ['Winter', 'Spring', 'Summer', 'Fall'];
-        const {name: currentSeasonName, year: currentYear} = current;
-        const currentSeasonIndex = NAME_OF_SEASONS.findIndex(name => name === currentSeasonName);
+        const NAME_OF_SEASONS = ['Winter', 'Spring', 'Summer', 'Fall']
+        const {name: currentSeasonName, year: currentYear} = current
+        const currentSeasonIndex = NAME_OF_SEASONS.findIndex(name => name === currentSeasonName)
 
         let deltaYear = Math.floor((currentSeasonIndex + offset) / NAME_OF_SEASONS.length)
 
         const newName = NAME_OF_SEASONS[mod(currentSeasonIndex + offset, NAME_OF_SEASONS.length)]
         const newYear = currentYear + deltaYear
 
-        return {name: newName, year: newYear};
+        return {name: newName, year: newYear}
     }
 
     /**
@@ -74,7 +74,7 @@
      * @returns {string} New url that points to <code>season</code>
      */
     function constructSeasonUrl(season) {
-        return `/${season.name}-${season.year}`;
+        return `/${season.name}-${season.year}`
     }
 
 
@@ -86,7 +86,7 @@
     function getVueDataAttr(node) {
         const rawDataAttr = Object.keys(node.dataset)?.[0]
         if (!rawDataAttr) {
-            return undefined;
+            return undefined
         }
 
         return `${rawDataAttr[0]}-${rawDataAttr.substring(1)}`
@@ -112,10 +112,10 @@
 
         const anchor = document.createElement('a')
         anchor.href = constructSeasonUrl(season)
-        anchor.className = isActive ? 'season router-link-exact-active router-link-active' : 'season';
+        anchor.className = isActive ? 'season router-link-exact-active router-link-active' : 'season'
         anchor.setAttribute(`data-${dataAttr}`, undefined)
         anchor.append(seasonNameDiv, seasonYearDiv)
-        return anchor;
+        return anchor
     }
 
     /**
@@ -125,6 +125,6 @@
      * @returns {number}
      */
     function mod(a, b) {
-        return ((a % b) + b) % b;
+        return ((a % b) + b) % b
     }
-})();
+})()
