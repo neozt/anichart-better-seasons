@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         anichart-better-seasons
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/neozt/anichart-better-seasons
 // @version      v0.0.1
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
 // @author       Zhen Ting, Neo
