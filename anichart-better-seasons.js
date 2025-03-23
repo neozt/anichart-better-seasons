@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         anichart-better-seasons
 // @namespace    https://github.com/neozt/anichart-better-seasons
-// @version      v1.0.1
+// @version      v1.1.0
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
 // @author       Zhen Ting, Neo
 // @match        https://anichart.net/**
@@ -14,9 +14,14 @@
 
     console.log('[anichart-better-seasons] script running')
 
-    window.navigation.addEventListener("navigate", () => setTimeout(main))
+    window.navigation.addEventListener("navigate", () => setTimeout(replaceSeasonLinks))
 
-    function main() {
+    document.addEventListener("keydown", handleKeyboardShortcuts)
+
+    /**
+     * Replace Anichart's season link at the top with season links centered around currently selected season.
+     */
+    function replaceSeasonLinks() {
         const currentUrl = getUrl(window)
         const currentSeason = extractSeason(currentUrl)
 
@@ -26,12 +31,31 @@
         const seasonLinks = [-2, -1, 0, 1, 2]
             .map(i =>
                 createSeasonLink(document, {
-                    season: changeSeason(currentSeason, i),
+                    season: incrementSeason(currentSeason, i),
                     dataAttr: extractVueDataAttr(seasonsContainer),
                     activeLink: i === 0,
                 })
             )
         seasonsContainer.replaceChildren(...seasonLinks)
+    }
+
+    /**
+     * Navigate to previous or next season when keyboard shortcut is pressed.
+     * @param {KeyboardEvent} event
+     */
+    function handleKeyboardShortcuts(event) {
+        console.log("[anichart-better-seasons] event", event);
+
+        const currentUrl = getUrl(window)
+        const currentSeason = extractSeason(currentUrl)
+
+        if (event.key === 'ArrowLeft' && event.ctrlKey === true) {
+            const previousSeason = incrementSeason(currentSeason, -1)
+            window.location.assign(constructSeasonUrl(previousSeason))
+        } else if (event.key === 'ArrowRight' && event.ctrlKey === true) {
+            const nextSeason = incrementSeason(currentSeason, 1)
+            window.location.assign(constructSeasonUrl(nextSeason))
+        }
     }
 
     /**
@@ -61,7 +85,7 @@
      * @param {number} offset Can be positive or negative. Positive will calculate next season, negative will calculate previous season
      * @returns {{name: string, year: number}}
      */
-    function changeSeason(current, offset) {
+    function incrementSeason(current, offset) {
         const NAME_OF_SEASONS = ['Winter', 'Spring', 'Summer', 'Fall']
         const {name: currentSeasonName, year: currentYear} = current
         const currentSeasonIndex = NAME_OF_SEASONS.findIndex(name => name === currentSeasonName)
