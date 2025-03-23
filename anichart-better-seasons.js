@@ -14,7 +14,7 @@
 
     /** Customize your config here **/
     const CONFIG = {
-        replaceSeasonLinks: true,
+        replaceSeasonLinks: true, // set to false to use default Anichart season links
         previousSeasonKey: 'ArrowLeft', // set undefined to disable previous season shortcut
         previousSeasonKeyMod: 'ctrlKey', // undefined or 'ctrlKey' or 'altKey' or 'shiftKey'
         nextSeasonKey: 'ArrowRight', // set undefined to disable next season shortcut

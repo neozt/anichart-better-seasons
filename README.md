@@ -11,6 +11,13 @@ Notice the season links at the top. Currently Summer 2024 is selected.
 ![Screenshot of Anichart without extension enabled](docs/images/anichart-original.png)
 
 
+## Features
+1. Replace default season links to dynamically generated list centered around the currently selected season.
+2. Adds keyboard shortcuts to go to previous or next season (<kbd>Ctrl + Left Arrow</kbd> and <kbd>Ctrl + Right Arrow</kbd> by default).
+
+## How to customise
+Customise the behaviour of this extension by modifying the `CONFIG` object at the top of the script.
+
 ## How to install
 1. Install [Tempermonkey](https://www.tampermonkey.net/) extension in your browser if you don't already have it.
 2. Add a new user script in Tempermonkey and replace the content of it with the content of `anichart-better-seasons.js` file and make sure it is enabled.
