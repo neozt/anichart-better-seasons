@@ -12,11 +12,24 @@
 (function () {
     'use strict'
 
+    /** Customize your config here **/
+    const CONFIG = {
+        replaceSeasonLinks: true,
+        previousSeasonKey: 'ArrowLeft', // set undefined to disable previous season shortcut
+        previousSeasonKeyMod: 'ctrlKey', // undefined or 'ctrlKey' or 'altKey' or 'shiftKey'
+        nextSeasonKey: 'ArrowRight', // set undefined to disable next season shortcut
+        nextSeasonKeyMod: 'ctrlKey', // undefined or 'ctrlKey' or 'altKey' or 'shiftKey'
+    }
+
     console.log('[anichart-better-seasons] script running')
 
-    window.navigation.addEventListener("navigate", () => setTimeout(replaceSeasonLinks))
+    if (CONFIG.replaceSeasonLinks) {
+        window.navigation.addEventListener("navigate", () => setTimeout(replaceSeasonLinks))
+    }
 
-    document.addEventListener("keydown", handleKeyboardShortcuts)
+    if (CONFIG.previousSeasonKey || CONFIG.nextSeasonKey) {
+        document.addEventListener("keydown", handleKeyboardShortcuts)
+    }
 
     /**
      * Replace Anichart's season link at the top with season links centered around currently selected season.
@@ -44,15 +57,15 @@
      * @param {KeyboardEvent} event
      */
     function handleKeyboardShortcuts(event) {
-        console.log("[anichart-better-seasons] event", event);
+        // console.log("[anichart-better-seasons] event", event) // Uncomment this line to find out what value to set for previousSeasonKey or nextSeasonKey
 
         const currentUrl = getUrl(window)
         const currentSeason = extractSeason(currentUrl)
 
-        if (event.key === 'ArrowLeft' && event.ctrlKey === true) {
+        if (event.key === CONFIG.previousSeasonKey && (CONFIG.previousSeasonKeyMod === undefined || event[CONFIG.previousSeasonKeyMod])) {
             const previousSeason = incrementSeason(currentSeason, -1)
             window.location.assign(constructSeasonUrl(previousSeason))
-        } else if (event.key === 'ArrowRight' && event.ctrlKey === true) {
+        } else if (event.key === CONFIG.nextSeasonKey && (CONFIG.nextSeasonKeyMod === undefined || event[CONFIG.nextSeasonKeyMod])) {
             const nextSeason = incrementSeason(currentSeason, 1)
             window.location.assign(constructSeasonUrl(nextSeason))
         }
