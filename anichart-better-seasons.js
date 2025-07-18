@@ -108,15 +108,15 @@
   function extractSeason(url) {
     const splitted = url.split("/");
     const lastPart = splitted[splitted.length - 1];
-    const [name, year] = lastPart.split("-");
+    const [name, yearStr] = lastPart.split("-");
 
-    const yearNumber = parseInt(year);
+    const year = parseInt(yearStr);
 
-    if (!SEASONS.includes(name) || isNaN(yearNumber)) {
+    if (!SEASONS.includes(name) || isNaN(year)) {
       return undefined;
     }
 
-    return { name, year: yearNumber };
+    return { name, year: year };
   }
 
   /**
