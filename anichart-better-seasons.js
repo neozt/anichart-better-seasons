@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         anichart-better-seasons
 // @namespace    https://github.com/neozt/anichart-better-seasons
-// @version      v1.1.0
+// @version      v1.1.1
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
 // @author       Zhen Ting, Neo
 // @match        https://anichart.net/**
@@ -21,6 +21,8 @@
         nextSeasonKeyMod: 'ctrlKey', // undefined or 'ctrlKey' or 'altKey' or 'shiftKey'
     }
 
+    const SEASONS = ['Winter', 'Spring', 'Summer', 'Fall']
+
     console.log('[anichart-better-seasons] script running')
 
     if (CONFIG.replaceSeasonLinks) {
@@ -39,6 +41,10 @@
         const currentSeason = extractSeason(currentUrl)
 
         console.log(`[anichart-better-seasons] currentSeason: ${JSON.stringify(currentSeason)}, currentUrl: ${currentUrl}`)
+
+        if (!currentSeason) {
+            return
+        }
 
         const seasonsContainer = document.querySelector('.seasons')
         const seasonLinks = [-2, -1, 0, 1, 2]
@@ -62,6 +68,10 @@
         const currentUrl = getUrl(window)
         const currentSeason = extractSeason(currentUrl)
 
+        if (!currentSeason) {
+            return
+        }
+
         if (event.key === CONFIG.previousSeasonKey && (CONFIG.previousSeasonKeyMod === undefined || event[CONFIG.previousSeasonKeyMod])) {
             const previousSeason = incrementSeason(currentSeason, -1)
             window.location.assign(constructSeasonUrl(previousSeason))
@@ -83,13 +93,20 @@
     /**
      * Extracts season's name and year from a URL.
      * @param {string} url
-     * @returns {{name: string, year: number}}
+     * @returns {{name: string, year: number} | undefined}
      */
     function extractSeason(url) {
         const splitted = url.split('/')
         const lastPart = splitted[splitted.length - 1]
         const [name, year] = lastPart.split('-')
-        return {name, year: parseInt(year)}
+
+        const yearNumber = parseInt(year)
+
+        if (!SEASONS.includes(name) || isNaN(yearNumber)) {
+            return undefined
+        }
+
+        return {name, year: yearNumber}
     }
 
     /**
