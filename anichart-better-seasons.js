@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         anichart-better-seasons
 // @namespace    https://github.com/neozt/anichart-better-seasons
-// @version      v1.1.1
+// @version      v1.1.2
 // @description  Replaces the season links at the top Anichart so that currently selected season is always centered
-// @author       Zhen Ting, Neo
+// @author       Neo Zhen Ting
 // @match        https://anichart.net/**
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=anichart.net
 // @grant        none
@@ -126,21 +126,22 @@
    * @returns {{name: string, year: number}}
    */
   function incrementSeason(current, offset) {
-    const NAME_OF_SEASONS = ["Winter", "Spring", "Summer", "Fall"];
     const { name: currentSeasonName, year: currentYear } = current;
-    const currentSeasonIndex = NAME_OF_SEASONS.findIndex(
+    const currentSeasonIndex = SEASONS.findIndex(
       (name) => name === currentSeasonName,
     );
 
     const deltaYear = Math.floor(
-      (currentSeasonIndex + offset) / NAME_OF_SEASONS.length,
+      (currentSeasonIndex + offset) / SEASONS.length,
     );
-
-    const newName =
-      NAME_OF_SEASONS[mod(currentSeasonIndex + offset, NAME_OF_SEASONS.length)];
     const newYear = currentYear + deltaYear;
 
-    return { name: newName, year: newYear };
+    const newName = SEASONS[mod(currentSeasonIndex + offset, SEASONS.length)];
+
+    return {
+      name: newName,
+      year: newYear,
+    };
   }
 
   /**
